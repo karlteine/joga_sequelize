@@ -10,7 +10,10 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      Article.belongsTo(models.Author, {
+        foreignKey: 'author_id',
+        as: 'author'
+      });
     }
   }
   Article.init({
@@ -41,7 +44,14 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATE,
       allowNull: false
     },
-    author_id: DataTypes.INTEGER
+    author_id: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: 'Authors',
+        key: 'id'
+      },
+      allowNull: false
+    }
   }, {
     sequelize,
     modelName: 'Article',

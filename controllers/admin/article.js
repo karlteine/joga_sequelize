@@ -27,7 +27,51 @@ const createArticle = (req, res) => {
         return res.status(500).send(error.message)
     })
 }
+const updateArticle = async (req, res) => {
+    const articleId = req.params.id;
+
+    if (req.method === 'GET') {
+        try {
+            // Fetch the article details by ID
+            const article = await models.Article.findByPk(articleId, {
+                include: [models.Author] // Include author details
+            });
+            if (!article) {
+                return res.status(404).json({ message: 'Article not found' });
+            }
+
+            // Render the edit form with article
+            res.render('editArticle', {
+                article: article.toJSON(),
+                authorName: article.Author.name // Assuming 'Author' is the association alias
+            });
+        } catch (error) {
+            console.error(error);
+            res.status(500).send('Internal Server Error');
+        }
+    } else if (req.method === 'POST') {
+        try {
+            const { name, slug, image, body, author_id } = req.body;
+
+            // Update the article in the database
+            const [updated] = await models.Article.update(
+                { name, slug, image, body, author_id },
+                { where: { id: articleId } }
+            );
+
+            if (updated) {
+                return res.status(200).json({ message: 'Article updated successfully' });
+            }
+
+            res.status(404).json({ message: 'Article not found' });
+        } catch (error) {
+            console.error(error);
+            res.status(500).send('Internal Server Error');
+        }
+    }
+};
 
 module.exports = {
-    createArticle
+    createArticle,
+    updateArticle
 } 

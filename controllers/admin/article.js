@@ -32,18 +32,16 @@ const updateArticle = async (req, res) => {
 
     if (req.method === 'GET') {
         try {
-            // Fetch the article details by ID
             const article = await models.Article.findByPk(articleId, {
-                include: [models.Author] // Include author details
+                include: [models.Author]
             });
             if (!article) {
                 return res.status(404).json({ message: 'Article not found' });
             }
 
-            // Render the edit form with article
             res.render('editArticle', {
                 article: article.toJSON(),
-                authorName: article.Author.name // Assuming 'Author' is the association alias
+                authorName: article.Author.name
             });
         } catch (error) {
             console.error(error);
@@ -53,7 +51,6 @@ const updateArticle = async (req, res) => {
         try {
             const { name, slug, image, body, author_id } = req.body;
 
-            // Update the article in the database
             const [updated] = await models.Article.update(
                 { name, slug, image, body, author_id },
                 { where: { id: articleId } }
@@ -71,7 +68,26 @@ const updateArticle = async (req, res) => {
     }
 };
 
+const deleteArticle = async (req, res) => {
+    const articleId = req.params.id;
+
+    try {
+        const article = await models.Article.findByPk(articleId);
+        if (!article) {
+            return res.status(404).json({ message: 'Article not found' });
+        }
+
+        await models.Article.destroy({ where: { id: articleId } });
+
+        res.redirect('/');
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
+};
+
 module.exports = {
     createArticle,
-    updateArticle
+    updateArticle,
+    deleteArticle
 } 

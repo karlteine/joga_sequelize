@@ -37,6 +37,12 @@
         button:hover {
             background-color: #0056b3;
         }
+        .delete-button {
+            background-color: #dc3545;
+        }
+        .delete-button:hover {
+            background-color: #c82333;
+        }
     </style>
 </head>
 <body>
@@ -55,9 +61,13 @@
         <textarea id="body" name="body" required>{{article.body}}</textarea>
         
         <label for="author_id">Author:</label>
-        <p>{{authorName}}</p> <!-- Display author's name -->
+        <p>{{authorName}}</p> 
 
         <button type="submit">Update Article</button>
+    </form>
+    
+    <form action="/admin/article/edit/{{article.id}}?_method=DELETE" method="POST" style="margin-top: 20px;">
+        <button type="submit" class="delete-button">Delete Article</button>
     </form>
 </body>
 </html>

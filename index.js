@@ -2,9 +2,12 @@ const express = require("express");
 const exphbs  = require('express-handlebars');
 const path = require('path');
 const helpers  = require('./helpers/helpers')
+const methodOverride = require('method-override'); 
 const app = express()
 
 app.use(express.json())
+
+app.use(methodOverride('_method'))
 
 const hbs = exphbs.create({
     helpers: helpers,
